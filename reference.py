@@ -3,7 +3,10 @@
 Spyder Editor
 
 This is a temporary script file.
+
+reference: http://nbviewer.ipython.org/github/justmarkham/gadsdc1/blob/master/logistic_assignment/kevin_logistic_sklearn.ipynb
 """
+from __future__ import division
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
@@ -51,8 +54,101 @@ y = np.ravel(y)
 
 model = LogisticRegression()
 model = model.fit(X, y)
-print model.score(X, y);
-#print y.mean();
+print model.score(X, y); #0.89453
+print y.mean(); #0.10546
+
+#w big test
+print 'test~~~'
+#df20 = pd.read_csv('out_gt/test_data', names = ['a', 'b', 'c', 'd', 'e'])
+df20 = pd.read_csv('out_gt/day20', names = initcolumns)
+#print df20
+#y20, X20 = dmatrices('e ~ a + b + c + d', df20, return_type='dataframe')
+y20, X20 = dmatrices('x ~ a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+u+v+w',
+                  df20, return_type = "dataframe")
+#print X20
+#print y20
+y20 = np.ravel(y20)
+#print y20
+model20 = LogisticRegression()
+model20 = model20.fit(X20, y20)
+#print y20.mean()
+print model20.score(X20, y20) #accuracy rate = (TP+TN)/sample_size (note:probability=0.5)
+#print model20.predict_proba(X20) #type: numpy.ndarray
+#print model20.predict_proba([1,0,0,0,0]) #[Intercept=1, a, b, c, d]
+df20_proba = model20.predict_proba(X20)
+#print df20_proba[:,1]
+print df20_proba[:,1][0]
+print df20_proba[:,1][1]
+print df20_proba[:,1][2]
+TP = 0
+FP = 0
+TN = 0
+FN = 0
+threshold = 0.00
+data_size = 0
+while threshold < 0.01: # from 0.00 to 0.40
+    TP = 0
+    FP = 0
+    TN = 0
+    FN = 0
+    data_size = 0
+    #with open('out_gt/test_data') as fp:
+    with open('out_gt/day20') as fp:
+        for line in fp:
+            gt = line.split(",")[-1][0] #last index of line
+            proba = df20_proba[:,1][data_size]
+            #pred = 'true' if float(proba) > threshold else 'false'
+            if float(proba) >= threshold and int(gt) == 1:
+                TP += 1
+            if float(proba) >= threshold and int(gt) == 0:
+                FP += 1
+            if float(proba) < threshold and int(gt) == 1:
+                FN += 1
+            if float(proba) < threshold and int(gt) == 0:
+                TN += 1
+            data_size += 1
+            #print 'gt:%s, proba:%s, pred:%s' % (gt, proba, pred)
+    #print 'TP %d, FP %d, FN %d, TN %d' % (TP, FP, FN, TN)
+    print 'threshold %f, TPR %.2f, FPR %.2f, accuracy %f' % (threshold, TP/(TP + FN), FP/(FP + TN), (TP + TN)/data_size)
+    threshold += 0.01
+print df20_proba[:,0].size
+print data_size
+print TP+FP+TN+FN
+print 'test~~~'
+#w big test
+
+#w big test 2
+print 'test2~~~'
+df21 = pd.read_csv('out_gt/day21', names = initcolumns)
+y21, X21 = dmatrices('x ~ a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+u+v+w',
+                     df21, return_type = "dataframe")
+y21 = np.ravel(y21)
+print y21.size
+df21_proba = model20.predict_proba(X21)
+threshold21 = 0.00
+while threshold21 < 0.40:
+    TP = 0
+    FP = 0
+    TN = 0
+    FN = 0
+    data_size = 0
+    with open('out_gt/day21') as fp:
+        for line in fp:
+            gt = line.split(",")[-1][0]
+            proba = df21_proba[:,1][data_size]
+            if float(proba) >= threshold21 and int(gt) == 1:
+                TP += 1
+            if float(proba) >= threshold21 and int(gt) == 0:
+                FP += 1
+            if float(proba) < threshold21 and int(gt) == 1:
+                FN += 1
+            if float(proba) < threshold21 and int(gt) == 0:
+                TN += 1
+            data_size += 1
+    print 'threshold %f, TPR %.2f, FPR %.2f, accuracy %f, data_size %d' % (threshold21, TP/(TP + FN), FP/(FP + TN), (TP + TN)/data_size, data_size)
+    threshold21 += 0.01
+print 'test2~~~'
+#w big test 2
 
 #print pd.DataFrame(zip(X.columns, np.transpose(model.coef_)))
 

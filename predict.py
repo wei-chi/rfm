@@ -1,5 +1,10 @@
 #!/usr/bin/python
 
+"""
+example input: day20, format:(0..21, R, F, gt), in 'out_gt'
+example output: day20_out, format:(0..21, R, F, gt, R*F), in 'out_RcrossF'
+"""
+
 import sys
 
 sum = 0

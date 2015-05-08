@@ -151,6 +151,10 @@ Z4 = foreach Z3 generate COUNT(GT7);
 dump Z4;
 */
 
+--all columns:74153212
+--user:60611
+--
+
 --not null columns:1784424
 --user:34809
 --user+cata:195576
